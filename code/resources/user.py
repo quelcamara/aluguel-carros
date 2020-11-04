@@ -23,9 +23,16 @@ class UserRegister(Resource):
     def post(self):
         data = _user_parser.parse_args()
         user = UserModel(**data)
-        return {'user': user.json()}
+        user.save_to_db()
+        return user.json(), 201
 
 
 class UserResource(Resource):
+    def get(self, username):
+        user = UserModel.find_by_username(username)
+        return user.json()
+
+
+class UserList(Resource):
     def get(self):
         return {'users': [user.json() for user in UserModel.find_all()]}
