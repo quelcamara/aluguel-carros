@@ -22,17 +22,32 @@ _user_parser.add_argument('name',
 class UserRegister(Resource):
     def post(self):
         data = _user_parser.parse_args()
+
+        if len(data['password']) < 6:
+            return {'Mensagem': 'Senha deve ter no mínimo 6 dígitos.'}, 400
+
+        if UserModel.find_by_username(data['username']):
+            return {'Mensagem': 'Usuário com username já cadastrado.'}, 400
+
         user = UserModel(**data)
         user.save_to_db()
         return user.json(), 201
 
 
 class UserResource(Resource):
-    def get(self, username):
-        user = UserModel.find_by_username(username)
-        return user.json()
+    def get(self, _id):
+        user = UserModel.find_by_id(_id)
+        return user.json(), 200
+
+    def delete(self, _id):
+        user = UserModel.find_by_id(_id)
+        if not user:
+            return {'Mensagem': 'Usuário não encontrado'}, 404
+
+        user.delete_from_db()
+        return {'Mensagem': 'Usuário deletado com sucesso.'}, 200
 
 
 class UserList(Resource):
     def get(self):
-        return {'users': [user.json() for user in UserModel.find_all()]}
+        return {'users': [user.json() for user in UserModel.find_all()]}, 200
