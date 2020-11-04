@@ -17,6 +17,11 @@ _user_parser.add_argument('name',
                           required=True,
                           help='Este campo deve ser preenchido'
                           )
+_user_parser.add_argument('user_type',
+                          type=int,
+                          required=True,
+                          help='Este campo deve ser preenchido'
+                          )
 
 
 class UserRegister(Resource):
