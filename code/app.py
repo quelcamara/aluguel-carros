@@ -1,13 +1,14 @@
 from flask import Flask
 from flask_restful import Api
 
-from resources.user import UserResource
+from resources.user import UserResource, UserRegister
 
 app = Flask(__name__)
 api = Api(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 
+api.add_resource(UserRegister, '/user/register')
 api.add_resource(UserResource, '/user')
 
 
