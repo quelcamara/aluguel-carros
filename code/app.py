@@ -8,6 +8,7 @@ from resources.user import (
     UserList,
     UserTypeList,
 )
+from models.car import CarBrand, CarModel
 from resources.userLogin import UserLogin
 from models.userType import UserType
 
