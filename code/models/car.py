@@ -1,4 +1,28 @@
 from db import db
+from flask_restful import reqparse
+from models.carBrand import CarBrand
+
+_user_parse = reqparse.RequestParser()
+_user_parse.add_argument('name',
+                         type=str,
+                         required=True,
+                         help='Este campo deve ser preenchido'
+                         )
+_user_parse.add_argument('color',
+                         type=str,
+                         required=True,
+                         default=None
+                         )
+_user_parse.add_argument('year',
+                         type=int,
+                         required=True,
+                         help='Este campo deve ser preenchido'
+                         )
+_user_parse.add_argument('daily_cost',
+                         type=float,
+                         required=True,
+                         help='Este campo deve ser preenchido'
+                         )
 
 
 class CarModel(db.Model):
@@ -19,15 +43,3 @@ class CarModel(db.Model):
         self.year = year
         self.daily_cost = daily_cost
 
-
-class CarBrand(db.Model):
-    __tablename__ = 'car_brands'
-
-    id = db.Column(db.Integer, primary_key=True)
-    brand = db.Column(db.String(50))
-
-    car_model = db.relationship('CarModel')
-
-    def __init__(self, _id, brand):
-        self.id = _id
-        self.brand = brand
