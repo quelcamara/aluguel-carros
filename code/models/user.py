@@ -5,24 +5,25 @@ class UserModel(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
     username = db.Column(db.String(50))
     password = db.Column(db.String(50))
-    name = db.Column(db.String(80))
 
     user_type = db.Column(db.Integer, db.ForeignKey('user_type.id'))
     credentials = db.relationship('UserType')
 
-    def __init__(self, username, password, name):
+    def __init__(self, username, password, name, user_type):
         self.username = username
         self.password = password
         self.name = name
+        self.user_type = user_type
 
     def json(self):
         return {
             'id': self.id,
-            'type': self.user_type,
+            'name': self.name,
             'username': self.username,
-            'name': self.name
+            'type': self.user_type
         }
 
     def save_to_db(self):
