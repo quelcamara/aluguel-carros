@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+from flask_jwt_extended import jwt_required
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
@@ -54,6 +55,7 @@ class UserResource(Resource):
 
 
 class UserTypeList(Resource):
+    @jwt_required
     def get(self, user_type):
         return {'users': [user.json() for user in UserModel.find_by_type(user_type)]}, 200
 
