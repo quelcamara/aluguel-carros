@@ -53,6 +53,11 @@ class UserResource(Resource):
         return {'Mensagem': 'Usuário deletado com sucesso.'}, 200
 
 
+class UserTypeList(Resource):
+    def get(self, user_type):
+        return {'users': [user.json() for user in UserModel.find_by_type(user_type)]}, 200
+
+
 class UserList(Resource):
     def get(self):
         return {'users': [user.json() for user in UserModel.find_all()]}, 200
