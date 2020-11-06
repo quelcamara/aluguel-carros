@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
@@ -42,7 +42,12 @@ class UserRegister(Resource):
 
 
 class UserResource(Resource):
+    @jwt_required
     def get(self, _id):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         user = UserModel.find_by_id(_id)
 
         if not user:
@@ -50,7 +55,12 @@ class UserResource(Resource):
 
         return user.json(), 200
 
+    @jwt_required
     def delete(self, _id):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         user = UserModel.find_by_id(_id)
 
         if not user:
@@ -63,9 +73,18 @@ class UserResource(Resource):
 class UserTypeList(Resource):
     @jwt_required
     def get(self, user_type):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         return {'users': [user.json() for user in UserModel.find_by_type(user_type)]}, 200
 
 
 class UserList(Resource):
+    @jwt_required
     def get(self):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         return {'users': [user.json() for user in UserModel.find_all()]}, 200

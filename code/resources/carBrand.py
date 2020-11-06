@@ -27,6 +27,7 @@ class BrandRegister(Resource):
 
 
 class BrandResource(Resource):
+    @jwt_required
     def get(self, _id):
         brand = CarBrand.find_by_id(_id)
 
@@ -35,7 +36,12 @@ class BrandResource(Resource):
 
         return brand.json()
 
+    @jwt_required
     def delete(self, _id):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         brand = CarBrand.find_by_id(_id)
 
         if not brand:
@@ -46,5 +52,6 @@ class BrandResource(Resource):
 
 
 class BrandList(Resource):
+    @jwt_required
     def get(self):
-        return {'brands': [brand.json() for brand in CarBrand.find_all()]}
+        return {'brands': [brand.json() for brand in CarBrand.find_all()]}, 200

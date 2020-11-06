@@ -17,6 +17,11 @@ _user_parse.add_argument('year',
                          required=True,
                          help='Este campo deve ser preenchido'
                          )
+_user_parse.add_argument('license_plate',
+                         type=str,
+                         required=True,
+                         help='Este campo deve ser preenchido'
+                         )
 _user_parse.add_argument('daily_cost',
                          type=float,
                          required=True,
@@ -44,15 +49,21 @@ class CarRegister(Resource):
 
 
 class CarResource(Resource):
+    @jwt_required
     def get(self, _id):
         car = CarModel.find_by_id(_id)
 
         if not car:
             return {'Mensagem': 'Carro não encontrado'}, 404
 
-        return car.json()
+        return car.json(), 200
 
+    @jwt_required
     def delete(self, _id):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         car = CarModel.find_by_id(_id)
 
         if not car:
@@ -63,5 +74,6 @@ class CarResource(Resource):
 
 
 class CarList(Resource):
+    @jwt_required
     def get(self):
-        return {'cars': [car.json() for car in CarModel.find_all()]}
+        return {'cars': [car.json() for car in CarModel.find_all()]}, 200

@@ -8,15 +8,17 @@ class CarModel(db.Model):
     name = db.Column(db.String(50))
     color = db.Column(db.String(50))
     year = db.Column(db.Integer)
+    license_plate = db.Column(db.String(50))
     daily_cost = db.Column(db.Float(precision=2))
 
     brand_id = db.Column(db.Integer, db.ForeignKey('car_brands.id'))
     car_brand = db.relationship('CarBrand')
 
-    def __init__(self, name, color, year, daily_cost, brand_id):
+    def __init__(self, name, color, year, daily_cost, brand_id, license_plate):
         self.name = name
         self.color = color
         self.year = year
+        self.license_plate = license_plate
         self.daily_cost = daily_cost
         self.brand_id = brand_id
 
@@ -26,6 +28,7 @@ class CarModel(db.Model):
             'name': self.name,
             'color': self.color,
             'year': self.year,
+            'license_plate': self.license_plate,
             'daily_cost': self.daily_cost,
             'brand_id': self.brand_id
         }
