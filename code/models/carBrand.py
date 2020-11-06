@@ -1,12 +1,4 @@
 from db import db
-from flask_restful import reqparse
-
-_user_parser = reqparse.RequestParser()
-_user_parser.add_argument('brand',
-                          type=str,
-                          required=True,
-                          help='Este campo deve ser preenchido'
-                          )
 
 
 class CarBrand(db.Model):
@@ -17,6 +9,19 @@ class CarBrand(db.Model):
 
     car_model = db.relationship('CarModel')
 
-    def __init__(self, _id, brand):
-        self.id = _id
+    def __init__(self, brand):
         self.brand = brand
+
+    def json(self):
+        return {
+            "id": self.id,
+            "brand": self.brand
+        }
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.add(self)
+        db.session.commit()
