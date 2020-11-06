@@ -10,8 +10,7 @@ _user_parse.add_argument('name',
                          )
 _user_parse.add_argument('color',
                          type=str,
-                         required=True,
-                         default=None
+                         default='-'
                          )
 _user_parse.add_argument('year',
                          type=int,
@@ -32,21 +31,22 @@ class CarRegister(Resource):
         car.save_to_db()
         return car.json(), 200
 
-    def delete(self):
-        pass
-
 
 class CarResource(Resource):
     def get(self, _id):
         car = CarModel.find_by_id(_id)
         return car.json()
 
+    def delete(self, _id):
+        car = CarModel.find_by_id(_id)
+
+        if not car:
+            return {'Mensagem': 'Carro não encontrado.'}, 404
+
+        car.delete_from_db()
+        return{'Mensagem': 'Carro excluído com sucesso.'}, 200
+
 
 class CarList(Resource):
     def get(self):
-        pass
-
-
-class CarBrandList(Resource):
-    def get(self):
-        pass
+        return {'cars': [car.json() for car in CarModel.find_all()]}

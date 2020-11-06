@@ -47,11 +47,12 @@ class UserResource(Resource):
 
     def delete(self, _id):
         user = UserModel.find_by_id(_id)
+
         if not user:
             return {'Mensagem': 'Usuário não encontrado'}, 404
 
         user.delete_from_db()
-        return {'Mensagem': 'Usuário deletado com sucesso.'}, 200
+        return {'Mensagem': 'Usuário excluído com sucesso.'}, 200
 
 
 class UserTypeList(Resource):

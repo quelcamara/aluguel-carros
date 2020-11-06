@@ -9,7 +9,7 @@ class CarModel(db.Model):
     name = db.Column(db.String(50))
     color = db.Column(db.String(50))
     year = db.Column(db.Integer)
-    daily_cost = db.Column(db.Integer)
+    daily_cost = db.Column(db.Float(precision=2))
 
     brand_id = db.Column(db.Integer, db.ForeignKey('car_brands.id'))
     car_brand = db.relationship('CarBrand')
