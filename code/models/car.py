@@ -1,28 +1,5 @@
 from db import db
-from flask_restful import reqparse
 from models.carBrand import CarBrand
-
-_user_parse = reqparse.RequestParser()
-_user_parse.add_argument('name',
-                         type=str,
-                         required=True,
-                         help='Este campo deve ser preenchido'
-                         )
-_user_parse.add_argument('color',
-                         type=str,
-                         required=True,
-                         default=None
-                         )
-_user_parse.add_argument('year',
-                         type=int,
-                         required=True,
-                         help='Este campo deve ser preenchido'
-                         )
-_user_parse.add_argument('daily_cost',
-                         type=float,
-                         required=True,
-                         help='Este campo deve ser preenchido'
-                         )
 
 
 class CarModel(db.Model):
@@ -43,3 +20,31 @@ class CarModel(db.Model):
         self.year = year
         self.daily_cost = daily_cost
 
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'color': self.color,
+            'year': self.year,
+            'daily_cost': self.daily_cost
+        }
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    @classmethod
+    def find_by_name(cls, name):
+        return cls.query.filter_by(name=name).all()
+
+    @classmethod
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()

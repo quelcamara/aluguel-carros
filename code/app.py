@@ -8,7 +8,7 @@ from resources.user import (
     UserList,
     UserTypeList,
 )
-from resources.car import CarRegister, CarList
+from resources.car import CarRegister, CarResource, CarList
 from resources.userLogin import UserLogin
 from models.userType import UserType
 
@@ -26,6 +26,7 @@ api.add_resource(UserTypeList, '/users/<int:user_type>')
 api.add_resource(UserList, '/users')
 api.add_resource(CarRegister, '/car/register')
 api.add_resource(CarList, '/cars')
+api.add_resource(CarResource, '/car/<int:_id>')
 
 
 @app.before_first_request
