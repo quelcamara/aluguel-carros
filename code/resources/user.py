@@ -21,7 +21,8 @@ _user_parser.add_argument('name',
 _user_parser.add_argument('user_type',
                           type=int,
                           required=True,
-                          help='Este campo deve ser preenchido'
+                          choices=(1, 2),
+                          help='Tipo de usuário inválido.'
                           )
 
 

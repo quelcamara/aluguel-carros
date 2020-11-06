@@ -31,5 +31,9 @@ class CarBrand(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
+    def find_by_brand(cls, brand):
+        return cls.query.filter_by(brand=brand).first()
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
