@@ -18,13 +18,24 @@ class BrandRegister(Resource):
 
 
 class BrandResource(Resource):
-    def get(self):
-        pass
+    def get(self, _id):
+        brand = CarBrand.find_by_id(_id)
 
-    def delete(self):
-        pass
+        if not brand:
+            return {'Mensagem': 'Marca não encontrada.'}, 404
+
+        return brand.json()
+
+    def delete(self, _id):
+        brand = CarBrand.find_by_id(_id)
+
+        if not brand:
+            return {'Mensagem': 'Marca não encontrada.'}, 404
+
+        brand.delete_from_db()
+        return {'Mensagem': 'Marca excluída com sucesso.'}, 200
 
 
 class BrandList(Resource):
     def get(self):
-        pass
+        return {'brands': [brand.json() for brand in CarBrand.find_all()]}

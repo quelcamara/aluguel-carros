@@ -9,7 +9,7 @@ from resources.user import (
     UserTypeList,
 )
 from resources.car import CarRegister, CarResource, CarList
-from resources.carBrand import BrandRegister
+from resources.carBrand import BrandRegister, BrandResource, BrandList
 from resources.userLogin import UserLogin
 from models.userType import UserType
 
@@ -25,10 +25,14 @@ api.add_resource(UserLogin, '/user/login')
 api.add_resource(UserResource, '/user/<int:_id>')
 api.add_resource(UserTypeList, '/users/<int:user_type>')
 api.add_resource(UserList, '/users')
+
 api.add_resource(CarRegister, '/car/register')
-api.add_resource(CarList, '/cars')
 api.add_resource(CarResource, '/car/<int:_id>')
+api.add_resource(CarList, '/cars')
+
 api.add_resource(BrandRegister, '/brand/register')
+api.add_resource(BrandResource, '/brand/<int:_id>')
+api.add_resource(BrandList, '/brands')
 
 
 @app.before_first_request
