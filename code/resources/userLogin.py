@@ -1,8 +1,14 @@
 from werkzeug.security import safe_str_cmp
 from flask_restful import reqparse, Resource
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import (create_access_token,
+                                create_refresh_token,
+                                get_raw_jwt,
+                                jwt_refresh_token_required,
+                                get_jwt_identity, jwt_required
+                                )
 
 from models.user import UserModel
+from blacklist import BLACKLIST
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
@@ -32,3 +38,19 @@ class UserLogin(Resource):
                    }, 200
 
         return {'Mensagem': 'Credenciais inválidas'}, 401
+
+
+class UserLogout(Resource):
+    @jwt_required
+    def post(self):
+        jti = get_raw_jwt()['jti']
+        BLACKLIST.add(jti)
+        return {'Mensagem': 'Logout realizado com sucesso'}, 200
+
+
+class TokenRefresh(Resource):
+    @jwt_refresh_token_required
+    def post(self):
+        current_user = get_jwt_identity()
+        new_token = create_access_token(identity=current_user, fresh=False)
+        return {'access_token': new_token}, 200

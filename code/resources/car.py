@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from models.car import CarModel
 
 _user_parse = reqparse.RequestParser()
@@ -58,7 +58,7 @@ class CarResource(Resource):
 
         return car.json(), 200
 
-    @jwt_required
+    @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()
         if not claims['funcionario']:

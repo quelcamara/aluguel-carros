@@ -1,15 +1,17 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
                           type=str,
+                          case_sensitive=True,
                           required=True,
                           help='Este campo deve ser preenchido.'
                           )
 _user_parser.add_argument('password',
                           type=str,
+                          case_sensitive=True,
                           required=True,
                           help='Este campo deve ser preenchido.'
                           )
@@ -55,7 +57,7 @@ class UserResource(Resource):
 
         return user.json(), 200
 
-    @jwt_required
+    @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()
         if not claims['funcionario']:

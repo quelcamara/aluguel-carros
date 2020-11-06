@@ -1,6 +1,6 @@
 from flask_restful import reqparse, Resource
 from models.carBrand import CarBrand
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('brand',
@@ -36,7 +36,7 @@ class BrandResource(Resource):
 
         return brand.json()
 
-    @jwt_required
+    @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()
         if not claims['funcionario']:
