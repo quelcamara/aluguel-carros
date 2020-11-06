@@ -1,5 +1,5 @@
-from flask_restful import Resource
-from flask_restful import reqparse
+from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_claims
 from models.car import CarModel
 
 _user_parse = reqparse.RequestParser()
@@ -22,10 +22,21 @@ _user_parse.add_argument('daily_cost',
                          required=True,
                          help='Este campo deve ser preenchido'
                          )
+_user_parse.add_argument('brand_id',
+                         type=int,
+                         required=True,
+                         help='Este campo deve ser preenchido'
+                         )
 
 
 class CarRegister(Resource):
+    @jwt_required
     def post(self):
+        claims = get_jwt_claims()
+
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         data = _user_parse.parse_args()
         car = CarModel(**data)
         car.save_to_db()

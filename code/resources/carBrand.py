@@ -1,5 +1,6 @@
 from flask_restful import reqparse, Resource
 from models.carBrand import CarBrand
+from flask_jwt_extended import jwt_required, get_jwt_claims
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('brand',
@@ -10,8 +11,16 @@ _user_parser.add_argument('brand',
 
 
 class BrandRegister(Resource):
+    @jwt_required
     def post(self):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
         data = _user_parser.parse_args()
+        if CarBrand.find_by_brand(data['brand']):
+            return {'Mensagem': 'Marca de carro já cadastrada.'}, 400
+
         brand = CarBrand(**data)
         brand.save_to_db()
         return brand.json()

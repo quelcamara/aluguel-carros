@@ -42,6 +42,13 @@ def create_tables():
     UserType.client()
 
 
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    if identity == 1:
+        return {'funcionario': True}
+    return {'funcionario': False}
+
+
 @app.route("/", methods=['GET'])
 def root():
     return "Bem vindo a Fabulosa Locadora de Carros de Luxxxo da Raquel!"

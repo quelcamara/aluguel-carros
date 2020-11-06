@@ -13,11 +13,12 @@ class CarModel(db.Model):
     brand_id = db.Column(db.Integer, db.ForeignKey('car_brands.id'))
     car_brand = db.relationship('CarBrand')
 
-    def __init__(self, name, color, year, daily_cost):
+    def __init__(self, name, color, year, daily_cost, brand_id):
         self.name = name
         self.color = color
         self.year = year
         self.daily_cost = daily_cost
+        self.brand_id = brand_id
 
     def json(self):
         return {
@@ -25,7 +26,8 @@ class CarModel(db.Model):
             'name': self.name,
             'color': self.color,
             'year': self.year,
-            'daily_cost': self.daily_cost
+            'daily_cost': self.daily_cost,
+            'brand_id': self.brand_id
         }
 
     def save_to_db(self):
