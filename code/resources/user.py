@@ -43,6 +43,10 @@ class UserRegister(Resource):
 class UserResource(Resource):
     def get(self, _id):
         user = UserModel.find_by_id(_id)
+
+        if not user:
+            return {'Mensagem': 'Usuário não encontrado.'}, 404
+
         return user.json(), 200
 
     def delete(self, _id):

@@ -35,6 +35,10 @@ class CarRegister(Resource):
 class CarResource(Resource):
     def get(self, _id):
         car = CarModel.find_by_id(_id)
+
+        if not car:
+            return {'Mensagem': 'Carro não encontrado'}, 404
+
         return car.json()
 
     def delete(self, _id):
