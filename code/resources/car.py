@@ -6,6 +6,7 @@ _user_parse = reqparse.RequestParser()
 _user_parse.add_argument('name',
                          type=str,
                          required=True,
+                         nullable=False,
                          help='Este campo deve ser preenchido'
                          )
 _user_parse.add_argument('color',
@@ -15,22 +16,32 @@ _user_parse.add_argument('color',
 _user_parse.add_argument('year',
                          type=int,
                          required=True,
+                         nullable=False,
                          help='Este campo deve ser preenchido'
                          )
 _user_parse.add_argument('license_plate',
                          type=str,
                          required=True,
+                         nullable=False,
                          help='Este campo deve ser preenchido'
                          )
 _user_parse.add_argument('daily_cost',
                          type=float,
                          required=True,
+                         nullable=False,
                          help='Este campo deve ser preenchido'
                          )
 _user_parse.add_argument('brand_id',
                          type=int,
                          required=True,
+                         nullable=False,
                          help='Este campo deve ser preenchido'
+                         )
+_user_parse.add_argument('status',
+                         type=str,
+                         default='Disponível',
+                         nullable=False,
+                         help='Este campo deve ser preenchido os valores: <Disponível> ou <Indisponível>'
                          )
 
 
@@ -44,7 +55,11 @@ class CarRegister(Resource):
 
         data = _user_parse.parse_args()
         car = CarModel(**data)
-        car.save_to_db()
+        try:
+            car.save_to_db()
+        except:
+            return {'Mensagem': 'Um erro ocorreu ao tentar inserir o carro. Confira os dados de entrada.'}, 500
+
         return car.json(), 200
 
 

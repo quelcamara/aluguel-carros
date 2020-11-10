@@ -5,7 +5,7 @@ class CarBrand(db.Model):
     __tablename__ = 'car_brands'
 
     id = db.Column(db.Integer, primary_key=True)
-    brand = db.Column(db.String(50))
+    brand = db.Column(db.String(50), nullable=False)
 
     car_model = db.relationship('CarModel')
 

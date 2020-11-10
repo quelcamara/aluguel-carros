@@ -66,7 +66,7 @@ def revoked_token_callback():
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    if identity == 1:
+    if identity["id"] == 1:
         return {'funcionario': True}
     return {'funcionario': False}
 

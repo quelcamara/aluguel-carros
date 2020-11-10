@@ -7,23 +7,27 @@ _user_parser.add_argument('username',
                           type=str,
                           case_sensitive=True,
                           required=True,
+                          nullable=False,
                           help='Este campo deve ser preenchido.'
                           )
 _user_parser.add_argument('password',
                           type=str,
                           case_sensitive=True,
                           required=True,
+                          nullable=False,
                           help='Este campo deve ser preenchido.'
                           )
 _user_parser.add_argument('name',
                           type=str,
                           required=True,
+                          nullable=False,
                           help='Este campo deve ser preenchido'
                           )
 _user_parser.add_argument('user_type',
                           type=int,
                           required=True,
                           choices=(1, 2),
+                          nullable=False,
                           help='Tipo de usuário inválido.'
                           )
 
@@ -39,7 +43,11 @@ class UserRegister(Resource):
             return {'Mensagem': 'Usuário com username já cadastrado.'}, 400
 
         user = UserModel(**data)
-        user.save_to_db()
+        try:
+            user.save_to_db()
+        except:
+            return {'Mensagem': 'Um erro ocorreu ao tentar salvar o usuário. Confira os dados de entrada.'}, 500
+
         return user.json(), 201
 
 

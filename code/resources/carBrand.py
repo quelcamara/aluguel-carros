@@ -6,6 +6,7 @@ _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('brand',
                           type=str,
                           required=True,
+                          nullable=False,
                           help='Este campo deve ser preenchido'
                           )
 

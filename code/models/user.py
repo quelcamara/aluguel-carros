@@ -5,11 +5,11 @@ class UserModel(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    username = db.Column(db.String(50))
-    password = db.Column(db.String(50))
+    name = db.Column(db.String(80), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
 
-    user_type = db.Column(db.Integer, db.ForeignKey('user_type.id'))
+    user_type = db.Column(db.Integer, db.ForeignKey('user_type.id'), nullable=False)
     credentials = db.relationship('UserType')
 
     def __init__(self, username, password, name, user_type):
