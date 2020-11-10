@@ -11,6 +11,7 @@ from resources.user import (
 from resources.car import CarRegister, CarResource, CarList
 from resources.carBrand import BrandRegister, BrandResource, BrandList
 from resources.userLogin import UserLogin, UserLogout, TokenRefresh
+from resources.carRental import CarRental, CarReturn
 from models.userType import UserType
 from blacklist import BLACKLIST
 
@@ -43,6 +44,8 @@ api.add_resource(BrandRegister, '/brand/register')
 api.add_resource(BrandResource, '/brand/<int:_id>')
 api.add_resource(BrandList, '/brands')
 
+api.add_resource(CarRental, '/car/<int:car_id>/user/<int:user_id>')
+api.add_resource(CarReturn, '/car/<int:car_id>')
 
 @app.before_first_request
 def create_tables():

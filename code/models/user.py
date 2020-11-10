@@ -12,6 +12,8 @@ class UserModel(db.Model):
     user_type = db.Column(db.Integer, db.ForeignKey('user_type.id'), nullable=False)
     credentials = db.relationship('UserType')
 
+    rental_car = db.relationship('CarModel')
+
     def __init__(self, username, password, name, user_type):
         self.username = username
         self.password = password

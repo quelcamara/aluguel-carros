@@ -15,6 +15,8 @@ class CarModel(db.Model):
     car_brand = db.relationship('CarBrand')
 
     status = db.Column(db.String(50), nullable=False)
+    renter = db.Column(db.Integer, db.ForeignKey('users.id'))
+    renter_id = db.relationship('UserModel')
 
     def __init__(self, name, color, year, daily_cost, brand_id, license_plate, status):
         self.name = name
