@@ -7,10 +7,9 @@ from resources.user import (
     UserResource,
     UserRegister
 )
-from resources.car import CarRegister, CarResource, CarList
+from resources.car import CarRegister, CarResource, CarList, CarRental, CarReturn
 from resources.carBrand import BrandRegister, BrandResource, BrandList
 from resources.userLogin import UserLogin, UserLogout, TokenRefresh
-from resources.carRental import CarRental, CarReturn
 from models.userType import UserType
 from blacklist import BLACKLIST
 
@@ -26,24 +25,25 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
-api.add_resource(UserRegister, '/user/register')
-api.add_resource(UserLogin, '/user/login')
-api.add_resource(UserLogout, '/user/logout')
-api.add_resource(TokenRefresh, '/user/refresh')
+api.add_resource(UserRegister, '/users/register')
+api.add_resource(UserLogin, '/users/login')
+api.add_resource(UserLogout, '/users/logout')
+api.add_resource(TokenRefresh, '/users/refresh')
 
 api.add_resource(UserResource, '/users/<int:_id>')
 api.add_resource(UserList, '/users')
 
-api.add_resource(CarRegister, '/car/register')
-api.add_resource(CarResource, '/car/<int:_id>')
-api.add_resource(CarList, '/cars')
-
-api.add_resource(BrandRegister, '/brand/register')
-api.add_resource(BrandResource, '/brand/<int:_id>')
+api.add_resource(BrandRegister, '/brands/register')
+api.add_resource(BrandResource, '/brands/<int:_id>')
 api.add_resource(BrandList, '/brands')
 
-api.add_resource(CarRental, '/car/<int:car_id>/user/<int:user_id>')
-api.add_resource(CarReturn, '/car/<int:car_id>')
+api.add_resource(CarRegister, '/cars/register')
+api.add_resource(CarResource, '/cars/<int:_id>')
+api.add_resource(CarList, '/cars')
+
+api.add_resource(CarRental, '/user/<int:user_id>/cars/<int:car_id>/rental')
+api.add_resource(CarReturn, '/cars/<int:car_id>/return')
+
 
 @app.before_first_request
 def create_tables():

@@ -27,6 +27,12 @@ class BrandRegister(Resource):
         return brand.json()
 
 
+class BrandList(Resource):
+    @jwt_required
+    def get(self):
+        return {'brands': [brand.json() for brand in CarBrand.find_all()]}, 200
+
+
 class BrandResource(Resource):
     @jwt_required
     def get(self, _id):
@@ -34,7 +40,6 @@ class BrandResource(Resource):
 
         if not brand:
             return {'Mensagem': 'Marca não encontrada.'}, 404
-
         return brand.json()
 
     @fresh_jwt_required
@@ -50,9 +55,3 @@ class BrandResource(Resource):
 
         brand.delete_from_db()
         return {'Mensagem': 'Marca excluída com sucesso.'}, 200
-
-
-class BrandList(Resource):
-    @jwt_required
-    def get(self):
-        return {'brands': [brand.json() for brand in CarBrand.find_all()]}, 200

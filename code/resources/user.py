@@ -75,7 +75,7 @@ class UserList(Resource):
             users = UserModel.find_by_type(data['user_type_filter'])
             if not users:
                 return {'Mensagem': 'Usuários não encontrados.'}, 404
-            return {'users': [user.json() for user in UserModel.find_by_type(data['user_type_filter'])]}, 200
+            return {'users': [user.json() for user in users]}, 200
 
 
 class UserResource(Resource):
@@ -97,7 +97,6 @@ class UserResource(Resource):
             return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
 
         user = UserModel.find_by_id(_id)
-
         if not user:
             return {'Mensagem': 'Usuário não encontrado'}, 404
 

@@ -52,5 +52,17 @@ class CarModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
+    def find_by_year(cls, year):
+        return cls.query.filter_by(year=year).all()
+
+    @classmethod
+    def find_by_brand(cls, brand):
+        return cls.query.filter_by(brand_id=brand).all()
+
+    @classmethod
+    def find_by_status(cls, status):
+        return cls.query.filter_by(status=status).all()
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
