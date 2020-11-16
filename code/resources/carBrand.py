@@ -1,6 +1,7 @@
 from flask_restful import reqparse, Resource
 from models.carBrand import CarBrand
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
+from sqlalchemy import exc
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('brand',
@@ -49,9 +50,11 @@ class BrandResource(Resource):
             return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
 
         brand = CarBrand.find_by_id(_id)
-
         if not brand:
             return {'Mensagem': 'Marca não encontrada.'}, 404
+        try:
+            brand.delete_from_db()
+        except exc.IntegrityError:
+            return {'Mensagem': 'Não é possível excluir esta marca pois existem carros associados a ela.'}, 400
 
-        brand.delete_from_db()
         return {'Mensagem': 'Marca excluída com sucesso.'}, 200

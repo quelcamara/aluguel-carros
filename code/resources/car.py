@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from models.car import CarModel
+from models.carBrand import CarBrand
 
 _user_parse = reqparse.RequestParser()
 _user_parse.add_argument('name',
@@ -76,13 +77,17 @@ class CarRegister(Resource):
             return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
 
         data = _user_parse.parse_args()
+        brand = CarBrand.find_by_id(data['brand_id'])
+        if not brand:
+            return {'Mensagem': 'Não foi possível registrar o carro, pois a marca inserida não está cadastrada.'}, 400
+
         car = CarModel(**data)
         try:
             car.save_to_db()
         except:
             return {'Mensagem': 'Um erro ocorreu ao tentar inserir o carro. Confira os dados de entrada.'}, 500
 
-        return car.json(), 200
+        return car.json(), 201
 
 
 class CarList(Resource):
