@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from models.car import CarModel
 from models.carBrand import CarBrand
+from models.user import UserModel
 
 _user_parse = reqparse.RequestParser()
 _user_parse.add_argument('name',
@@ -94,9 +95,8 @@ class CarList(Resource):
     @jwt_required
     def get(self):
         data = _user_parse_query.parse_args()
-
         if data['car_year'] is None and data['car_brand'] is None and data['car_status'] is None:
-            return {'cars:', [car.json() for car in CarModel.find_all()]}, 200
+            return {'cars:': [car.json() for car in CarModel.find_all()]}, 200
         elif data['car_year']:
             cars = CarModel.find_by_year(data['car_year'])
             if not cars:
@@ -140,6 +140,10 @@ class CarResource(Resource):
 class CarRental(Resource):
     @fresh_jwt_required
     def patch(self, car_id, user_id):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {'Mensagem': 'Não foi possível completar a requisição, pois não há usuários cadastrados com este ID.'}, 400
+
         car = CarModel.find_by_id(car_id)
         if not car:
             return {'Mensagem': 'Carro não cadastrado.'}, 404

@@ -27,8 +27,8 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
 api.add_resource(UserRegister, '/users/register')
 api.add_resource(UserLogin, '/users/login')
-api.add_resource(UserLogout, '/users/logout')
 api.add_resource(TokenRefresh, '/users/refresh')
+api.add_resource(UserLogout, '/users/logout')
 
 api.add_resource(UserResource, '/users/<int:_id>')
 api.add_resource(UserList, '/users')
@@ -41,7 +41,7 @@ api.add_resource(CarRegister, '/cars/register')
 api.add_resource(CarResource, '/cars/<int:_id>')
 api.add_resource(CarList, '/cars')
 
-api.add_resource(CarRental, '/user/<int:user_id>/cars/<int:car_id>/rental')
+api.add_resource(CarRental, '/users/<int:user_id>/cars/<int:car_id>/rental')
 api.add_resource(CarReturn, '/cars/<int:car_id>/return')
 
 
@@ -60,14 +60,14 @@ def check_if_token_in_blacklist(decrypted_token):
 @jwt.revoked_token_loader
 def revoked_token_callback():
     return jsonify({
-        'Descrição': 'Este token foi revogado.',
+        'Descrição': 'Este token foi revogado. Faça login novamente.',
         'Erro': 'token_revoked'
     }), 401
 
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    if identity["id"] == 1:
+    if identity["type"] == 1:
         return {'funcionario': True}
     return {'funcionario': False}
 

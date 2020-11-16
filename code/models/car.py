@@ -10,11 +10,11 @@ class CarModel(db.Model):
     year = db.Column(db.Integer, nullable=False)
     license_plate = db.Column(db.String(50), nullable=False)
     daily_cost = db.Column(db.Float(precision=2), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
 
     brand_id = db.Column(db.Integer, db.ForeignKey('car_brands.id'), nullable=False)
     car_brand = db.relationship('CarBrand')
 
-    status = db.Column(db.String(50), nullable=False)
     renter = db.Column(db.Integer, db.ForeignKey('users.id'))
     renter_id = db.relationship('UserModel')
 
