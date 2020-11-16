@@ -3,10 +3,9 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from resources.user import (
-    UserResource,
-    UserRegister,
     UserList,
-    UserTypeList,
+    UserResource,
+    UserRegister
 )
 from resources.car import CarRegister, CarResource, CarList
 from resources.carBrand import BrandRegister, BrandResource, BrandList
@@ -32,8 +31,7 @@ api.add_resource(UserLogin, '/user/login')
 api.add_resource(UserLogout, '/user/logout')
 api.add_resource(TokenRefresh, '/user/refresh')
 
-api.add_resource(UserResource, '/user/<int:_id>')
-api.add_resource(UserTypeList, '/users/<int:user_type>')
+api.add_resource(UserResource, '/users/<int:_id>')
 api.add_resource(UserList, '/users')
 
 api.add_resource(CarRegister, '/car/register')

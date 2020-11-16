@@ -31,6 +31,15 @@ _user_parser.add_argument('user_type',
                           help='Tipo de usuário inválido.'
                           )
 
+_user_parser_query = reqparse.RequestParser()
+_user_parser_query.add_argument('user-type',
+                                dest='user_type_filter',
+                                required=False,
+                                type=int,
+                                choices=(1, 2),
+                                location='args'
+                                )
+
 
 class UserRegister(Resource):
     def post(self):
@@ -51,6 +60,24 @@ class UserRegister(Resource):
         return user.json(), 201
 
 
+class UserList(Resource):
+    @jwt_required
+    def get(self):
+        claims = get_jwt_claims()
+        if not claims['funcionario']:
+            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
+
+        data = _user_parser_query.parse_args()
+
+        if data['user_type_filter'] is None:
+            return {'users': [user.json() for user in UserModel.find_all()]}, 200
+        elif data['user_type_filter']:
+            users = UserModel.find_by_type(data['user_type_filter'])
+            if not users:
+                return {'Mensagem': 'Usuários não encontrados.'}, 404
+            return {'users': [user.json() for user in UserModel.find_by_type(data['user_type_filter'])]}, 200
+
+
 class UserResource(Resource):
     @jwt_required
     def get(self, _id):
@@ -59,10 +86,8 @@ class UserResource(Resource):
             return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
 
         user = UserModel.find_by_id(_id)
-
         if not user:
             return {'Mensagem': 'Usuário não encontrado.'}, 404
-
         return user.json(), 200
 
     @fresh_jwt_required
@@ -78,23 +103,3 @@ class UserResource(Resource):
 
         user.delete_from_db()
         return {'Mensagem': 'Usuário excluído com sucesso.'}, 200
-
-
-class UserTypeList(Resource):
-    @jwt_required
-    def get(self, user_type):
-        claims = get_jwt_claims()
-        if not claims['funcionario']:
-            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
-
-        return {'users': [user.json() for user in UserModel.find_by_type(user_type)]}, 200
-
-
-class UserList(Resource):
-    @jwt_required
-    def get(self):
-        claims = get_jwt_claims()
-        if not claims['funcionario']:
-            return {'Mensagem': 'Privilégio de administrador exigido.'}, 401
-
-        return {'users': [user.json() for user in UserModel.find_all()]}, 200

@@ -41,6 +41,7 @@ _user_parse.add_argument('status',
                          type=str,
                          default='Disponível',
                          nullable=False,
+                         choices=('Disponível', 'Indisponível'),
                          help='Este campo deve ser preenchido os valores: <Disponível> ou <Indisponível>'
                          )
 
