@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+from flask_restful_swagger import swagger
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 
 _user_parser = reqparse.RequestParser()
@@ -42,6 +43,27 @@ _user_parser_query.add_argument('user-type',
 
 
 class UserRegister(Resource):
+    """Registro de usuários
+    Cadastro de clientes e funcionários no banco de dados.
+    """
+    @swagger.operation(
+        summary="Registra um usuário no banco de dados.",
+        notes="Para respostas válidas, todos os campos devem ser preenchidos. Não é permitido "
+              "o registro de usuários usernames já em uso, password devem ter len >= 6 e"
+              " deve ser inserido um valor válido para user_type {1-clientes, 2-funcionários}.",
+        nickname="registroUsarios",
+        parameters=[
+            {
+                "name": "body",
+                "in": "body",
+                "description": "Objeto user que precisa ser adicionado.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": UserModel.__name__,
+                "paramType": "body"
+            }
+        ]
+    )
     def post(self):
         data = _user_parser.parse_args()
 

@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api
+from flask_restful_swagger import swagger
 from flask_jwt_extended import JWTManager
 
 from resources.user import (
@@ -14,7 +15,7 @@ from models.userType import UserType
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
-api = Api(app)
+api = swagger.docs(Api(app), apiVersion='0.1', description="API para aluguel de carros.")
 jwt = JWTManager(app)
 app.secret_key = 'raquel'
 
