@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask_restful_swagger import swagger
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from models.car import CarModel
 from models.carBrand import CarBrand
@@ -44,7 +45,7 @@ _user_parse.add_argument('status',
                          default='Disponível',
                          nullable=False,
                          choices=('Disponível', 'Indisponível'),
-                         help='Este campo deve ser preenchido os valores: <Disponível> ou <Indisponível>'
+                         help='Este campo deve ser preenchido com os valores: <Disponível> ou <Indisponível>'
                          )
 
 _user_parse_query = reqparse.RequestParser()
@@ -70,6 +71,55 @@ _user_parse_query.add_argument('car-status',
 
 
 class CarRegister(Resource):
+    """Registro de veículos
+        Cadastro de veículos no banco de dados.
+        """
+    @swagger.operation(
+        summary="Registra um veículo no banco de dados.",
+        notes="Para respostas válidas, todos os campos devem ser preenchidos. "
+              "Para cadastrar um carro, é necessário que sua marca já tenha sido cadastrada, "
+              "pois esses objetos carregar uma relação no banco de dados. Se excluído do corpo o campo 'status', "
+              "será cadastrado um carro com status default 'disponível'. Esta é uma requisição permitida "
+              "apenas para usuários do tipo 'funcionários'.",
+        nickname="registroCarro",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "body",
+                "in": "body",
+                "description": "Carro que precisa ser adicionado.",
+                "required": True,
+                "dataType": CarModel.__name__,
+                "paramType": "body"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 201,
+                "message": "Created"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 500,
+                "message": "Internal Server Error"
+            }
+        ]
+    )
     @jwt_required
     def post(self):
         claims = get_jwt_claims()
@@ -92,6 +142,65 @@ class CarRegister(Resource):
 
 
 class CarList(Resource):
+    """Lista de veículos
+    Listagem de veículos cadastrados, sendo possível filtrar por ano, marca e status.
+    """
+    @swagger.operation(
+        summary="Listagem de veículos do banco de dados.",
+        notes="Se nenhum parâmetro for incluído, é retornada uma lista com todos os veículos. "
+              "Caso contrário, retornará uma lista filtrada a partir dos parâmetros incluídos "
+              "na requisição feita pelo usuário.",
+        nickname="listaCarros",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "car-year",
+                "in": "query",
+                "description": "Filtro para ano de veículos.",
+                "required": False,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "query",
+            },
+            {
+                "name": "car-brand",
+                "in": "query",
+                "description": "Filtro para marca de veículos.",
+                "required": False,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "query"
+            },
+            {
+                "name": "car-status",
+                "in": "query",
+                "description": "Filtro para status de veículos.",
+                "required": False,
+                "allowMultiple": False,
+                "dataType": "",
+                "paramType": "query",
+                "enum": ["disponivel", "indisponivel"]
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @jwt_required
     def get(self):
         data = _user_parse_query.parse_args()
@@ -115,6 +224,44 @@ class CarList(Resource):
 
 
 class CarResource(Resource):
+    """Recursos permitidos com veículos cadastrados
+       Métodos para recuperar um veículo por ID e para excluir veículos do banco de dados.
+       """
+    @swagger.operation(
+        summary="Encontra veículo por ID.",
+        notes="Retorna um único veículo.",
+        nickname="buscaCarroPorID",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID do veículo para ser retornado.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @jwt_required
     def get(self, _id):
         car = CarModel.find_by_id(_id)
@@ -123,6 +270,48 @@ class CarResource(Resource):
             return {'Mensagem': 'Carro não encontrado'}, 404
         return car.json(), 200
 
+    @swagger.operation(
+        summary="Exclui um veículo cadastrado.",
+        notes="Para resposta válida, este endpoint deve ser testado com um fresh access token. "
+              "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
+              "do tipo 'refresh' não é permitido para executar esta ação. Esta é "
+              "uma requisição permitida apenas para usuários do tipo 'funcionários'.",
+        nickname="excluiCarro",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID do veículo a ser excluído.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()
@@ -138,6 +327,59 @@ class CarResource(Resource):
 
 
 class CarRental(Resource):
+    """Locação de veículos
+    Registra, no banco de dados, a locação de um veículo.
+    """
+    @swagger.operation(
+        summary="Aluga um veículo com status disponível.",
+        notes="Para resposta válida, este endpoint deve ser testado com um fresh access token. "
+              "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
+              "do tipo 'refresh' não é permitido para executar esta ação.",
+        nickname="alugaCarro",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "user_id",
+                "in": "path",
+                "description": "ID do usuário que irá retirar o carro.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            },
+            {
+                "name": "car_id",
+                "in": "path",
+                "description": "ID do veículo a ser locado.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @fresh_jwt_required
     def patch(self, car_id, user_id):
         user = UserModel.find_by_id(user_id)
@@ -159,6 +401,50 @@ class CarRental(Resource):
 
 
 class CarReturn(Resource):
+    """Devolução de veículos
+      Registra, no banco de dados, a devolução de um veículo.
+      """
+    @swagger.operation(
+        summary="Retorna um veículo alugado.",
+        notes="Para resposta válida, este endpoint deve ser testado com um fresh access token. "
+              "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
+              "do tipo 'refresh' não é permitido para executar esta ação.",
+        nickname="retornaCarro",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "car_id",
+                "in": "path",
+                "description": "ID do veículo a ser devolvido.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @fresh_jwt_required
     def patch(self, car_id):
         car = CarModel.find_by_id(car_id)

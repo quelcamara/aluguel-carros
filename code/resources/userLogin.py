@@ -7,9 +7,8 @@ from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity, jwt_required
                                 )
 from flask_restful_swagger import swagger
-from models.swaggerModels import UsersLogin
 
-from models.user import UserModel
+from models.user import UserModel, UserLoginModel
 from blacklist import BLACKLIST
 
 _user_parser = reqparse.RequestParser()
@@ -41,7 +40,7 @@ class UserLogin(Resource):
                 "description": "Credenciais de acesso do usuário",
                 "required": True,
                 "allowMultiple": False,
-                "dataType": UsersLogin.__name__,
+                "dataType": UserLoginModel.__name__,
                 "paramType": "body"
             }
         ],
@@ -79,7 +78,7 @@ class UserLogout(Resource):
         summary="Logout de usuários cadastrados.",
         notes="Ao fazer o logout, o usuário perde acesso aos endpoints e deixa o sistema. "
               "Para respostas válidas, inserir 'Bearer' seguido do token de acesso gerado ao realizar o login.",
-        nickname="logoutUsarios",
+        nickname="logoutUsario",
         parameters=[
             {
                 "name": "authorization",

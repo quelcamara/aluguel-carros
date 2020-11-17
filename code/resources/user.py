@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
-from models.swaggerModels import UserModel
 from flask_restful_swagger import swagger
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 
@@ -53,7 +52,7 @@ class UserRegister(Resource):
         notes="Para respostas válidas, todos os campos devem ser preenchidos. Não é permitido "
               "o registro de usuários usernames já em uso, password devem ter len >= 6 e"
               " deve ser inserido um valor válido para user_type {1-funcionários, 2-clientes}.",
-        nickname="registroUsarios",
+        nickname="registroUsario",
         parameters=[
             {
                 "name": "body",
@@ -121,7 +120,7 @@ class UserList(Resource):
             {
                 "name": "user-type",
                 "in": "query",
-                "description": "Tipo de usuário filtrado",
+                "description": "Filtro para tipo de usuários.",
                 "required": False,
                 "allowMultiple": False,
                 "dataType": "1-funcionários / "
@@ -169,7 +168,7 @@ class UserResource(Resource):
     @swagger.operation(
         summary="Encontra usuário por ID.",
         notes="Retorna um único usuário. Esta é uma requisição permitida "
-              "apenas para usuários do tipo 'funcionários'",
+              "apenas para usuários do tipo 'funcionários'.",
         nickname="buscaUsarioPorID",
         parameters=[
             {
@@ -219,9 +218,9 @@ class UserResource(Resource):
 
     @swagger.operation(
         summary="Exclui um cadastro de usuário.",
-        notes="Para resposta válida, este endpoint deve ser rodado com um fresh access token. "
+        notes="Para resposta válida, este endpoint deve ser testado com um fresh access token. "
               "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
-              "do tipo 'refresh' não são permitidos para executar esta ação. Esta é "
+              "do tipo 'refresh' não é permitido para executar esta ação. Esta é "
               "uma requisição permitida apenas para usuários do tipo 'funcionários'.",
         nickname="excluiUsario",
         parameters=[

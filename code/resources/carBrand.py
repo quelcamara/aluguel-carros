@@ -1,4 +1,5 @@
 from flask_restful import reqparse, Resource
+from flask_restful_swagger import swagger
 from models.carBrand import CarBrand
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from sqlalchemy import exc
@@ -13,6 +14,49 @@ _user_parser.add_argument('brand',
 
 
 class BrandRegister(Resource):
+    """Registro de marcas
+    Cadastro de marcas de carros no banco de dados.
+    """
+    @swagger.operation(
+        summary="Registra uma marca no banco de dados.",
+        notes="Para respostas válidas, todos os campos devem ser preenchidos. Não é permitido "
+              "o registro duplicado de marcas. Esta é uma requisição permitida "
+              "apenas para usuários do tipo 'funcionários'.",
+        nickname="registroMarca",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "body",
+                "in": "body",
+                "description": "Marca que precisa ser adicionada.",
+                "required": True,
+                "dataType": CarBrand.__name__,
+                "paramType": "body"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 201,
+                "message": "Created"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            }
+        ]
+    )
     @jwt_required
     def post(self):
         claims = get_jwt_claims()
@@ -25,24 +69,137 @@ class BrandRegister(Resource):
 
         brand = CarBrand(**data)
         brand.save_to_db()
-        return brand.json()
+        return brand.json(), 201
 
 
 class BrandList(Resource):
+    """Lista de marcas de veículos
+    Listagem de marcas cadastrados.
+    """
+    @swagger.operation(
+        summary="Listagem de marcas do banco de dados.",
+        notes="Retorna uma lista com as marcas de veículos cadastradas no banco de dados.",
+        nickname="listaMarcas",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            }
+        ]
+    )
     @jwt_required
     def get(self):
         return {'brands': [brand.json() for brand in CarBrand.find_all()]}, 200
 
 
 class BrandResource(Resource):
+    """Recursos permitidos com marcas cadastradas
+       Métodos para recuperar uma marca por ID e para excluir marcas do banco de dados.
+       """
+    @swagger.operation(
+        summary="Encontra marca por ID.",
+        notes="Retorna uma única marca.",
+        nickname="buscaMarcaPorID",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID da marca para ser retornada.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @jwt_required
     def get(self, _id):
         brand = CarBrand.find_by_id(_id)
 
         if not brand:
             return {'Mensagem': 'Marca não encontrada.'}, 404
-        return brand.json()
+        return brand.json(), 200
 
+    @swagger.operation(
+        summary="Exclui uma marca cadastrada.",
+        notes="Para resposta válida, este endpoint deve ser testado com um fresh access token. "
+              "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
+              "do tipo 'refresh' não é permitido para executar esta ação. Esta é "
+              "uma requisição permitida apenas para usuários do tipo 'funcionários'.",
+        nickname="excluiMarca",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID da marca cadastrada a ser excluída.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()

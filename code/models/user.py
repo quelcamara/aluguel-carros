@@ -1,7 +1,10 @@
 from db import db
+from flask_restful_swagger import swagger
 
 
+@swagger.model
 class UserModel(db.Model):
+    """Modelo de objeto 'user'"""
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -51,3 +54,12 @@ class UserModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+
+@swagger.model
+class UserLoginModel:
+    """Modelo de objeto 'user' para login"""
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password

@@ -1,7 +1,10 @@
 from db import db
+from flask_restful_swagger import swagger
 
 
+@swagger.model
 class CarBrand(db.Model):
+    """Modelo de objeto 'brand'"""
     __tablename__ = 'car_brands'
 
     id = db.Column(db.Integer, primary_key=True)

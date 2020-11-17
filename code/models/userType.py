@@ -1,7 +1,10 @@
 from db import db
+from flask_restful_swagger import swagger
 
 
+@swagger.model
 class UserType(db.Model):
+    """Modelo de objeto 'type'"""
     __tablename__ = 'user_type'
 
     id = db.Column(db.Integer, primary_key=True)
