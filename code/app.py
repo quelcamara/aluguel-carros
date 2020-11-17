@@ -15,7 +15,7 @@ from models.userType import UserType
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
-api = swagger.docs(Api(app), apiVersion='0.1', description="API para aluguel de carros.")
+api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url="/api/carros", description="API para aluguel de carros.")
 jwt = JWTManager(app)
 app.secret_key = 'raquel'
 

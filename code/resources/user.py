@@ -1,7 +1,9 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
+from models.swaggerModels import UserModel
 from flask_restful_swagger import swagger
 from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
+
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username',
@@ -50,7 +52,7 @@ class UserRegister(Resource):
         summary="Registra um usuário no banco de dados.",
         notes="Para respostas válidas, todos os campos devem ser preenchidos. Não é permitido "
               "o registro de usuários usernames já em uso, password devem ter len >= 6 e"
-              " deve ser inserido um valor válido para user_type {1-clientes, 2-funcionários}.",
+              " deve ser inserido um valor válido para user_type {1-funcionários, 2-clientes}.",
         nickname="registroUsarios",
         parameters=[
             {
@@ -58,9 +60,22 @@ class UserRegister(Resource):
                 "in": "body",
                 "description": "Objeto user que precisa ser adicionado.",
                 "required": True,
-                "allowMultiple": False,
                 "dataType": UserModel.__name__,
                 "paramType": "body"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 201,
+                "message": "Created"
+            },
+            {
+                "code": 400,
+                "message": "Bad Request"
+            },
+            {
+                "code": 500,
+                "message": "Internal Server Error"
             }
         ]
     )
@@ -83,6 +98,53 @@ class UserRegister(Resource):
 
 
 class UserList(Resource):
+    """Lista de usuários
+        Listagem de usuários cadastrados, sendo possível filtrar por tipo de usuário.
+        """
+    @swagger.operation(
+        summary="Listagem de usuários do banco de dados.",
+        notes="Se nenhum parâmetro for incluído, é retornada uma lista com todos os usuários. "
+              "Caso contrário, retornará uma lista com os usuários cadastrados apenas com "
+              "o tipo de usuário pesquisado. Esta é uma requisição permitida apenas "
+              "para usuários do tipo 'funcionários'.",
+        nickname="listaUsarios",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "user-type",
+                "in": "query",
+                "description": "Tipo de usuário filtrado",
+                "required": False,
+                "allowMultiple": False,
+                "dataType": "1-funcionários / "
+                            "2-clientes",
+                "paramType": "query",
+                "enum": [1, 2]
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @jwt_required
     def get(self):
         claims = get_jwt_claims()
@@ -101,6 +163,49 @@ class UserList(Resource):
 
 
 class UserResource(Resource):
+    """Recursos permitidos com usuários cadastrados
+   Métodos para recuperar um usuário por ID e para excluir usuário do banco de dados.
+   """
+    @swagger.operation(
+        summary="Encontra usuário por ID.",
+        notes="Retorna um único usuário. Esta é uma requisição permitida "
+              "apenas para usuários do tipo 'funcionários'",
+        nickname="buscaUsarioPorID",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID do usuário para ser retornado.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @jwt_required
     def get(self, _id):
         claims = get_jwt_claims()
@@ -112,6 +217,48 @@ class UserResource(Resource):
             return {'Mensagem': 'Usuário não encontrado.'}, 404
         return user.json(), 200
 
+    @swagger.operation(
+        summary="Exclui um cadastro de usuário.",
+        notes="Para resposta válida, este endpoint deve ser rodado com um fresh access token. "
+              "Para isso, basta inserir o token gerado após realizado login. Token de acesso "
+              "do tipo 'refresh' não são permitidos para executar esta ação. Esta é "
+              "uma requisição permitida apenas para usuários do tipo 'funcionários'.",
+        nickname="excluiUsario",
+        parameters=[
+            {
+                "name": "authorization",
+                "in": "body",
+                "description": "Autenticação de usuário.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Bearer {{access_token}}",
+                "paramType": "header"
+            },
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "ID do cadastro de usuário a ser excluído.",
+                "required": True,
+                "allowMultiple": False,
+                "dataType": "Integer",
+                "paramType": "path"
+            }
+        ],
+        responseMessages=[
+            {
+                "code": 200,
+                "message": "OK"
+            },
+            {
+                "code": 401,
+                "message": "Unauthorized"
+            },
+            {
+                "code": 404,
+                "message": "Not Found"
+            },
+        ]
+    )
     @fresh_jwt_required
     def delete(self, _id):
         claims = get_jwt_claims()

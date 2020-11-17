@@ -1,11 +1,7 @@
 from db import db
-from flask_restful_swagger import swagger
 
 
-@swagger.model
 class UserModel(db.Model):
-    """Modelo de Objeto 'User'"""
-
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
