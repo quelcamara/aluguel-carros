@@ -204,23 +204,16 @@ class CarList(Resource):
     @jwt_required
     def get(self):
         data = _user_parse_query.parse_args()
-        if data['car_year'] is None and data['car_brand'] is None and data['car_status'] is None:
-            return {'cars:': [car.json() for car in CarModel.find_all()]}, 200
-        elif data['car_year']:
-            cars = CarModel.find_by_year(data['car_year'])
-            if not cars:
-                return {'Mensagem': 'Não existem carros com este ano registrados.'}, 404
-            return {'cars': [car.json() for car in cars]}, 200
-        elif data['car_brand']:
-            cars = CarModel.find_by_brand(data['car_brand'])
-            if not cars:
-                return {'Mensagem': 'Não existem carros registrados para esta marca.'}, 404
-            return {'cars': [car.json() for car in cars]}, 200
-        elif data['car_status']:
-            cars = CarModel.find_by_status(data['car_status'])
-            if not cars:
-                return {'Mensagem': f'Não existem carros com este status no momento.'}, 404
-            return {'cars': [car.json() for car in cars]}, 200
+        car_list_filter = CarModel.filter(data['car_year'], data['car_brand'], data['car_status'])
+
+        if car_list_filter == "no_year":
+            return {'Mensagem': 'Não existem carros com este ano registrados.'}, 404
+        elif car_list_filter == "no_brand":
+            return {'Mensagem': 'Não existem carros registrados para esta marca.'}, 404
+        elif car_list_filter == "no_status":
+            return {'Mensagem': 'Não existem carros com este status no momento.'}, 404
+        else:
+            return {'cars:': [car.json() for car in car_list_filter]}, 200
 
 
 class CarResource(Resource):

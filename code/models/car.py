@@ -67,5 +67,25 @@ class CarModel(db.Model):
         return cls.query.filter_by(status=status).all()
 
     @classmethod
+    def filter(cls, year, brand, status):
+        query = cls.query
+        if year:
+            cars = query.filter_by(year=year)
+            if not cars.all():
+                return "no_year"
+            query = cars
+        if brand:
+            cars = query.filter_by(brand_id=brand)
+            if not cars.all():
+                return "no_brand"
+            query = cars
+        if status:
+            cars = query.filter_by(status=status)
+            if not cars.all():
+                return "no_status"
+            query = cars
+        return query.all()
+
+    @classmethod
     def find_all(cls):
         return cls.query.all()
