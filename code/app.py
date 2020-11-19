@@ -19,7 +19,7 @@ api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url="/api/carros", descr
 jwt = JWTManager(app)
 app.secret_key = 'raquel'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:***REMOVED***@localhost/aluguelcarros_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:****@localhost/aluguelcarros_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
