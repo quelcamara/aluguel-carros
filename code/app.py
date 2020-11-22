@@ -1,3 +1,4 @@
+import sys, getopt
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_restful_swagger import swagger
@@ -14,12 +15,31 @@ from resources.userLogin import UserLogin, UserLogout, TokenRefresh
 from models.userType import UserType
 from blacklist import BLACKLIST
 
+opts, args = getopt.getopt(sys.argv[1:],"",["db=", "dbuser=", "dbpassword="])
+db = 'sqlite'
+user = None
+password = None
+
+for opt, arg in opts:
+    if opt == '--db':
+        db = arg
+    if opt == '--dbuser':
+        user = arg
+    if opt == '--dbpassword':
+        password = arg
+
 app = Flask(__name__)
 api = swagger.docs(Api(app), apiVersion='0.1', api_spec_url="/api/carros", description="API para aluguel de carros.")
 jwt = JWTManager(app)
 app.secret_key = 'raquel'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:****@localhost/aluguelcarros_db'
+if db == 'mysql':
+    if not user or not password:
+        raise Exception('Se --db=mysql, favor digitar valores válidos para --dbuser e --dbpassword.')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{user}:{password}@localhost/aluguelcarros_db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///aluguelcarros.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
@@ -107,7 +127,7 @@ def token_not_fresh_callback():
 
 @app.route("/", methods=['GET'])
 def root():
-    return "Bem vindo a Fabulosa Locadora de Carros de Luxxxo da Raquel!"
+    return "<h2  style=\"color:purple\">Bem vindo a Fabulosa Locadora de Carros de Luxxxo da Raquel!</h1>"
 
 
 if __name__ == "__main__":
