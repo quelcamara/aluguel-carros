@@ -1,4 +1,4 @@
-<h1 align="center">:oncoming_taxi: Aluguel de Carros</h1>
+<h1 align="center">:oncoming_taxi: Aluguel de Carros REST API</h1>
 <p align="center"><a href="https://github.com/quelcamara/aluguel-carros"><img src="https://img.shields.io/badge/languages-1-pink"></a> <a href="https://github.com/quelcamara/aluguel-carros/commits/master"><img src="https://img.shields.io/badge/last%20commit-november-red"></a></p>
 
 <p align="center"> :construction: Concluído  :heavy_check_mark:</p>
@@ -49,7 +49,7 @@ O projeto foi desenvolvido utilizando as seguintes ferramentas:
 * [PyMySQL](https://pypi.org/project/PyMySQL/#installation) --versão: 0.10
 
 ## :rocket: Como executar o projeto
-Este projeto foi desnvolvido em uma única parte contendo o Backend (para server) da aplicação.
+Este projeto foi desenvolvido em uma única parte contendo o Backend (para server) da aplicação.
 
 Para rodar a aplicação, precisarão ser feitas algumas configurações iniciais na máquina.
 
@@ -58,7 +58,7 @@ Para rodar a aplicação, precisarão ser feitas algumas configurações iniciai
 ### Pré-requisitos
 Antes de começar, você precisará ter instalado em sua máquina o [Python](https://www.python.org/downloads/). Além desta ferramenta, caso deseje trabalhar com o código, também é recomendável ter um editor para códigos, como o [VSCode](https://code.visualstudio.com/); ou uma IDE Python, como o [PyCharm](https://www.jetbrains.com/pt-br/pycharm/download/#section=windows).
 
-Será necessário, também, fazer dowload do repositório [aluguel-carros](https://github.com/quelcamara/aluguel-carros).
+Será necessário, também, fazer dowload do projeto [aluguel-carros](https://github.com/quelcamara/aluguel-carros).
 
 #### :wrench: Configurações iniciais
 A app foi construída em cima de um ambiente virtual contendo os pacotes necessários para o funcionamento desta API. Para configurar um ambiente virtual e executar o código, no terminal/cmd:
@@ -99,7 +99,9 @@ $ python .\code\app.py
 ```
 * Com banco de dados MySQL:
   
-  Para executar com banco MySQL, insira os parâmetros de entrada `--db=`, `--dbuser=` e `--dbpassword` na linha de comando.
+  Para executar com banco MySQL, você deverá criar um banco com nome `aluguelcarros_db`.
+  
+  Em seguida, basta inserir os parâmetros de entrada `--db=`, `--dbuser=` e `--dbpassword` na linha de comando.
   
   Nos campos `<USUÁRIO>` e `<SENHA>` devem ser inseridos os seus dados de acesso ao MySQL.
 ```shell
@@ -120,6 +122,6 @@ Acesse a documentação em formato [JSON](http://localhost:5000/api/carros.json)
 
 ## 🦸 Autora
 <img src="https://avatars3.githubusercontent.com/u/73648823?s=460&u=81cc56a7c802bd21b265dfb0dadadccce01ec987&v=4" height="100" width="100">
-__Raquel Câmara Porto__ :maple_leaf:
+Raquel Câmara Porto :maple_leaf:
 
 <a href="https://www.linkedin.com/in/raquel-camara/"><img src="https://img.shields.io/badge/-Raquel-%230077B5?style=flat-square&logo=linkedin&logoColor=white"></a> <a href="mailto:raquelc.porto@outlook.com"><img src="https://img.shields.io/badge/-raquelc.porto@outlook.com-%230078D4?style=flat-square&logo=microsoft-outlook&logoColor=white"></a>
