@@ -4,22 +4,22 @@
 <p align="center"> :construction: Concluído  :heavy_check_mark:</p>
 
 # Tabela de Conteúdos
-* [Sobre o projeto](#sobre-o-projeto)
-* [Funcionalidades](#funcionalidades)
-* [Tecnologias](#tecnologias)
-* [Como executar o projeto](#como-executar-o-projeto)
+* [Sobre o projeto](#computer-sobre-o-projeto)
+* [Funcionalidades](#gear-funcionalidades)
+* [Tecnologias](#hammer_and_wrench-tecnologias)
+* [Como executar o projeto](#rocket-como-executar-o-projeto)
   * [Pré-requisitos](#pré-requisitos)
-  * [Configurações iniciais](#configurações-iniciais)
-  * [Rodando o Backend (servidor)](#rodando-o-backend)
-  * [Testando a aplicação com Swagger](#testando-a-aplicação-com-swagger)
-* [Autora](#autora)
+  * [Configurações iniciais](#wrench-configurações-iniciais)
+  * [Rodando o Backend (servidor)](#game_die-rodando-o-backend-servidor)
+  * [Testando a aplicação com Swagger](#key-testando-a-aplicação-com-swagger)
+* [Autora](#superhero-autora)
 
 ## :computer: Sobre o projeto
 Aluguel de Carros é uma API REST para sistemas de locação de veículos.
 
 Projeto desenvolvido para compor portfólio de desenvolvimento.
 
-## ⚙️ Funcionalidades
+## :gear: Funcionalidades
 A aplicação permite que os usuários realizem:
 
 - [x] Interações com usuários:
@@ -35,7 +35,7 @@ A aplicação permite que os usuários realizem:
   - [x] Aluguel e retorno de veículos
   - [x] Exclusão de cadastros
 
-## 🛠 Tecnologias
+## :hammer_and_wrench: Tecnologias
 O projeto foi desenvolvido utilizando as seguintes ferramentas:
 * [Python](https://www.python.org/downloads/) --versão: 3.7
 * [Flask](https://www.fullstackpython.com/flask.html) --versão: 1.1
@@ -111,7 +111,7 @@ O servidor iniciará em host=localhost e port=5000.
 
 Acesse inserindo `http://localhost:5000/` na barra de endereços do seu browser, ou clicando [aqui](http://localhost:5000/).
 
-#### :key:Testando a aplicação com Swagger
+#### :key: Testando a aplicação com Swagger
 Todo o código desta aplicação encontra-se documentado no Swagger.
 
 > :bulb: Para ter acesso à documentação e testar os endpoints da aplicação, é necessário que o código esteja em execução na máquina.
@@ -120,7 +120,7 @@ Acesse a documentação em formato [JSON](http://localhost:5000/api/carros.json)
 
 <p align="center"><a href="http://localhost:5000/api/carros.html#!/carros/alugaCarro"><img src="https://img.shields.io/badge/-Run%20in%20Swagger-%2385EA2D?style=flat&logo=swagger&logoColor=black"></a></p>
 
-## 🦸 Autora
+## :superhero: Autora
 <img src="https://avatars3.githubusercontent.com/u/73648823?s=460&u=81cc56a7c802bd21b265dfb0dadadccce01ec987&v=4" height="100" width="100">
 Raquel Câmara Porto :maple_leaf:
 
